@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { ThemeProvider } from 'styled-components';
-import { App } from './components/App';
+import  {App}  from 'components/App';
+import { GlobalStyle } from 'components/GlobalStyle';
+import { StateExample } from 'components/StateExample/StateExample';
 
 const theme = {
   colors: {
@@ -16,9 +18,10 @@ const theme = {
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
-      <App />
+      {/* <App /> */}
+      <StateExample />
+      <GlobalStyle />
     </ThemeProvider>
   </React.StrictMode>
 );
-
 
