@@ -10,7 +10,7 @@ export const A = ({ clicks, onIncrement, onReset }) => {
         <div style={styles}>
             <p>Clicks: {clicks}</p>
             <button onClick={onIncrement}>Increment</button>
-            <B value={clicks} onReset={onReset} />
+            <B value={clicks} onReset1={onReset} onIncrement={onIncrement} />
         </div>
     );
 };
