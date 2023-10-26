@@ -6,6 +6,7 @@ import { Layout } from './Layout';
 // import { HiAcademicCap, HiAdjustments, HiArchive } from 'react-icons/hi';
 // import { IconButton } from './IconButton/IconButton';
 import { Component } from 'react';
+import { QuizForm } from './QuizForm/QuizForm';
 
 // export const App = () => {
 //   return (
@@ -45,6 +46,7 @@ export class App extends Component {
     return (
       <Layout>
         <SearchBar />
+        <QuizForm />
         <QuizList items={this.state.quizItems} onDelete={this.handleDelete} />
       </Layout>
     )
