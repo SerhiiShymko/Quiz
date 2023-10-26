@@ -8,27 +8,6 @@ import { Layout } from './Layout';
 import { Component } from 'react';
 import { QuizForm } from './QuizForm/QuizForm';
 
-// export const App = () => {
-//   return (
-//     <Layout>
-//       <SearchBar />
-//       <QuizList items={quizItems} />
-
-//       <IconButton variant="primary" size="sm">
-//         <HiAcademicCap />
-//       </IconButton>
-//       <IconButton variant="secondary" size="md">
-//         <HiArchive />
-//       </IconButton>
-//       <IconButton variant="secondary" size="lg">
-//         <HiAdjustments />
-//       </IconButton>
-
-//       <GlobalStyle />
-//     </Layout>
-//   );
-// };
-
 export class App extends Component {
   state = {
     quizItems: initialQuizItems
@@ -42,11 +21,19 @@ export class App extends Component {
     })
   }
 
+  addQuiz = newQuiz => {
+    this.setState(prevState => {
+      return {
+        quizItems: [...prevState.quizItems, newQuiz]
+      }
+    })
+  }
+
   render() {
     return (
       <Layout>
         <SearchBar />
-        <QuizForm />
+        <QuizForm onAdd={this.addQuiz} />
         <QuizList items={this.state.quizItems} onDelete={this.handleDelete} />
       </Layout>
     )
