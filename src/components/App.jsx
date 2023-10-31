@@ -10,8 +10,25 @@ import { QuizForm } from './QuizForm/QuizForm';
 
 export class App extends Component {
   state = {
-    quizItems: initialQuizItems
+    quizItems: initialQuizItems,
+    filters: {
+      topic: '',
+      level: ''
+    }
+
   }
+
+  chandeTopicFilter = (newTopic) => {
+    this.setState(prevState => {
+      return {
+        filters: {
+          ...prevState.filters,
+          topic: newTopic
+        }
+      }
+    })
+  }
+
 
   handleDelete = (quizId) => {
     this.setState(prevState => {
@@ -30,11 +47,18 @@ export class App extends Component {
   }
 
   render() {
+    const { filters, quizItems } = this.state
+
+    const visibleQuizItems = quizItems.filter(quiz =>
+      quiz.topic.toLowerCase().includes(filters.topic.toLowerCase()))
+
     return (
       <Layout>
-        <SearchBar />
+        <SearchBar
+          topicFilter={filters.topic}
+          onChandeTopic={this.chandeTopicFilter} />
         <QuizForm onAdd={this.addQuiz} />
-        <QuizList items={this.state.quizItems} onDelete={this.handleDelete} />
+        <QuizList items={visibleQuizItems} onDelete={this.handleDelete} />
       </Layout>
     )
   }
