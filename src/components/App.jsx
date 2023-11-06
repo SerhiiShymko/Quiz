@@ -14,6 +14,15 @@ export class App extends Component {
     },
   };
 
+  componentDidMount() {
+    console.log('componentDidMount');
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    console.log('this.props:', this.state);
+    console.log('prevState:', prevState);
+  }
+
   changeTopicFilter = newTopic => {
     this.setState(prevState => {
       return {
@@ -71,6 +80,7 @@ export class App extends Component {
   }
 
   render() {
+    console.log('render');
     const { filters } = this.state
 
     const visibleQuizItems = this.getVisibleQuizItems()
