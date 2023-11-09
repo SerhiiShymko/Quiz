@@ -34,6 +34,15 @@ export class App extends Component {
 
   // componentWillUnmount() { }
 
+  resetFilters = () => {
+    this.setState({
+      filters: {
+        topic: '',
+        level: 'all',
+      },
+    })
+  }
+
   changeTopicFilter = newTopic => {
     this.setState(prevState => {
       return {
@@ -103,6 +112,7 @@ export class App extends Component {
           levelFilter={filters.level}
           onChandeTopic={this.changeTopicFilter}
           onChandeLevel={this.changeLevelFilter}
+          onReset={this.resetFilters}
         />
         <QuizForm onAdd={this.addQuiz} />
         <QuizList items={visibleQuizItems} onDelete={this.handleDelete} />
