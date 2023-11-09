@@ -5,30 +5,34 @@ import { Layout } from './Layout';
 import { Component } from 'react';
 import { QuizForm } from './QuizForm/QuizForm';
 
+const localStorageKey = 'quiz-filters'
+const initialFilters = {
+  topic: '',
+  level: 'all',
+}
+
 export class App extends Component {
   state = {
     quizItems: initialQuizItems,
-    filters: {
-      topic: '',
-      level: 'all',
-    },
+    filters: initialFilters,
   };
 
   componentDidMount() {
-    const savedFilters = localStorage.getItem('quiz-filters')
+    const savedFilters = localStorage.getItem(localStorageKey)
     if (savedFilters !== null) {
       this.setState({
         filters: JSON.parse(savedFilters)
       })
     }
-
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log('this.props:', this.state.filters);
-    console.log('prevState:', prevState.filters);
-    if (prevState.filters !== this.state.filters) {
-      localStorage.setItem('quiz-filters', JSON.stringify(this.state.filters))
+    const { filters: prevFilters } = prevState;
+    const { filters: nextFilters } = this.state;
+
+
+    if (prevFilters !== nextFilters) {
+      localStorage.setItem(localStorageKey, JSON.stringify(nextFilters))
     }
   }
 
@@ -36,10 +40,7 @@ export class App extends Component {
 
   resetFilters = () => {
     this.setState({
-      filters: {
-        topic: '',
-        level: 'all',
-      },
+      filters: initialFilters,
     })
   }
 
