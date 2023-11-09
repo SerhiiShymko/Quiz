@@ -4,6 +4,8 @@ import { SearchBar } from './SearchBar/SearchBar';
 import { Layout } from './Layout';
 import { Component } from 'react';
 import { QuizForm } from './QuizForm/QuizForm';
+import { LevelFilter } from './LevelFilter';
+import { TopicFilter } from './TopicFilter';
 
 const localStorageKey = 'quiz-filters'
 const initialFilters = {
@@ -109,12 +111,11 @@ export class App extends Component {
     return (
       <Layout>
         <SearchBar
-          topicFilter={filters.topic}
-          levelFilter={filters.level}
-          onChandeTopic={this.changeTopicFilter}
-          onChandeLevel={this.changeLevelFilter}
           onReset={this.resetFilters}
-        />
+        >
+          <TopicFilter value={filters.topic} onChange={this.changeTopicFilter} />
+          <LevelFilter value={filters.level} onChange={this.changeLevelFilter} />
+        </SearchBar>
         <QuizForm onAdd={this.addQuiz} />
         <QuizList items={visibleQuizItems} onDelete={this.handleDelete} />
       </Layout>
