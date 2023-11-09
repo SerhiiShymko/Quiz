@@ -15,13 +15,24 @@ export class App extends Component {
   };
 
   componentDidMount() {
-    console.log('componentDidMount');
+    const savedFilters = localStorage.getItem('quiz-filters')
+    if (savedFilters !== null) {
+      this.setState({
+        filters: JSON.parse(savedFilters)
+      })
+    }
+
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log('this.props:', this.state);
-    console.log('prevState:', prevState);
+    console.log('this.props:', this.state.filters);
+    console.log('prevState:', prevState.filters);
+    if (prevState.filters !== this.state.filters) {
+      localStorage.setItem('quiz-filters', JSON.stringify(this.state.filters))
+    }
   }
+
+  // componentWillUnmount() { }
 
   changeTopicFilter = newTopic => {
     this.setState(prevState => {
