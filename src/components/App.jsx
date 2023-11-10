@@ -17,6 +17,7 @@ export class App extends Component {
   state = {
     quizItems: [],
     filters: initialFilters,
+    loading: false,
   };
 
   async componentDidMount() {
@@ -27,8 +28,12 @@ export class App extends Component {
       });
     }
 
+    this.setState({ loading: true })
     const quizItems = await fetchQuizzes();
-    this.setState({ quizItems })
+    this.setState({
+      quizItems,
+      loading: false
+    })
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -101,7 +106,7 @@ export class App extends Component {
   };
 
   render() {
-    const { filters } = this.state;
+    const { filters, loading } = this.state;
 
     const visibleQuizItems = this.getVisibleQuizItems();
 
@@ -118,7 +123,11 @@ export class App extends Component {
           />
         </SearchBar>
         <QuizForm onAdd={this.addQuiz} />
-        <QuizList items={visibleQuizItems} onDelete={this.handleDelete} />
+        {loading ? (
+          <div>LOADING...</div>
+        ) : (
+          <QuizList items={visibleQuizItems} onDelete={this.handleDelete} />
+        )}
       </Layout>
     );
   }
