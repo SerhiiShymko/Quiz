@@ -24,7 +24,7 @@ export class ImageApp extends Component {
       console.log(
         `HTTP запрос за ${this.state.query}, page=${this.state.page}`
       );
-      // HTTP запрос за query
+      // Не забуваємо відрізати req-id/ от query
       // this.setState({ images: результат запроса })
     }
   }

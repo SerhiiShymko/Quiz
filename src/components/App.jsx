@@ -1,5 +1,4 @@
 import { QuizList } from './QuizList/QuizList';
-import initialQuizItems from '../data.json';
 import { SearchBar } from './SearchBar/SearchBar';
 import { Layout } from './Layout';
 import { Component } from 'react';
@@ -15,7 +14,7 @@ const initialFilters = {
 
 export class App extends Component {
   state = {
-    quizItems: initialQuizItems,
+    quizItems: [],
     filters: initialFilters,
   };
 
