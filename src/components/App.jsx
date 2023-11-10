@@ -5,6 +5,7 @@ import { Component } from 'react';
 import { QuizForm } from './QuizForm/QuizForm';
 import { LevelFilter } from './LevelFilter';
 import { TopicFilter } from './TopicFilter';
+import { fetchQuizzes } from 'api';
 
 const localStorageKey = 'quiz-filters';
 const initialFilters = {
@@ -18,13 +19,16 @@ export class App extends Component {
     filters: initialFilters,
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     const savedFilters = localStorage.getItem(localStorageKey);
     if (savedFilters !== null) {
       this.setState({
         filters: JSON.parse(savedFilters),
       });
     }
+
+    const quizItems = await fetchQuizzes();
+    this.setState({ quizItems })
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -97,7 +101,6 @@ export class App extends Component {
   };
 
   render() {
-    console.log('render');
     const { filters } = this.state;
 
     const visibleQuizItems = this.getVisibleQuizItems();
