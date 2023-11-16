@@ -28,12 +28,14 @@ export class App extends Component {
       });
     }
 
-    this.setState({ loading: true })
-    const quizItems = await fetchQuizzes();
-    this.setState({
-      quizItems,
-      loading: false
-    })
+    try {
+      this.setState({ loading: true })
+      const quizItems = await fetchQuizzes();
+      this.setState({ quizItems, loading: false })
+    } catch (error) {
+      console.log(error);
+    }
+
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -76,24 +78,28 @@ export class App extends Component {
   };
 
   handleDelete = async (quizId) => {
-    const deletedQuiz = await deleteQuiz(quizId)
+    try {
+      const deletedQuiz = await deleteQuiz(quizId)
 
-    this.setState(prevState => {
-      return {
+      this.setState(prevState => ({
         quizItems: prevState.quizItems.filter(quiz => quiz.id !== deletedQuiz.id),
-      };
-    });
+      }));
+    } catch (error) {
+      console.log(error);
+    }
+
   };
 
   addQuiz = async newQuiz => {
-    const createdQuiz = await createQuiz(newQuiz)
+    try {
+      const createdQuiz = await createQuiz(newQuiz)
+      this.setState(prevState => ({
+        quizItems: [...prevState.quizItems, createdQuiz],
+      }));
+    } catch (error) {
+      console.log(error);
+    }
 
-    console.log(createdQuiz)
-    // this.setState(prevState => {
-    //   return {
-    //     quizItems: [...prevState.quizItems, newQuiz],
-    //   };
-    // });
   };
 
   getVisibleQuizItems = () => {
