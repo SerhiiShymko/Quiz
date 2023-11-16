@@ -6,3 +6,8 @@ export const fetchQuizzes = async () => {
   const response = await axios.get('/quizzes');
   return response.data;
 };
+
+export const deleteQuiz = async quizId => {
+  const response = await axios.delete(`/quizzes/${quizId}`);
+  return response.data;
+};

@@ -5,7 +5,7 @@ import { Component } from 'react';
 import { QuizForm } from './QuizForm/QuizForm';
 import { LevelFilter } from './LevelFilter';
 import { TopicFilter } from './TopicFilter';
-import { fetchQuizzes } from 'api';
+import { deleteQuiz, fetchQuizzes } from 'api';
 
 const localStorageKey = 'quiz-filters';
 const initialFilters = {
@@ -75,10 +75,12 @@ export class App extends Component {
     });
   };
 
-  handleDelete = quizId => {
+  handleDelete = async (quizId) => {
+    const deletedQuiz = await deleteQuiz(quizId)
+
     this.setState(prevState => {
       return {
-        quizItems: prevState.quizItems.filter(quiz => quiz.id !== quizId),
+        quizItems: prevState.quizItems.filter(quiz => quiz.id !== deletedQuiz.id),
       };
     });
   };
