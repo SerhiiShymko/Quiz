@@ -5,7 +5,7 @@ import { Component } from 'react';
 import { QuizForm } from './QuizForm/QuizForm';
 import { LevelFilter } from './LevelFilter';
 import { TopicFilter } from './TopicFilter';
-import { deleteQuiz, fetchQuizzes } from 'api';
+import { createQuiz, deleteQuiz, fetchQuizzes } from 'api';
 
 const localStorageKey = 'quiz-filters';
 const initialFilters = {
@@ -85,12 +85,15 @@ export class App extends Component {
     });
   };
 
-  addQuiz = newQuiz => {
-    this.setState(prevState => {
-      return {
-        quizItems: [...prevState.quizItems, newQuiz],
-      };
-    });
+  addQuiz = async newQuiz => {
+    const createdQuiz = await createQuiz(newQuiz)
+
+    console.log(createdQuiz)
+    // this.setState(prevState => {
+    //   return {
+    //     quizItems: [...prevState.quizItems, newQuiz],
+    //   };
+    // });
   };
 
   getVisibleQuizItems = () => {
