@@ -1,11 +1,11 @@
 import { QuizList } from './QuizList/QuizList';
 import { SearchBar } from './SearchBar/SearchBar';
 import { Layout } from './Layout';
-import { Component } from 'react';
 import { QuizForm } from './QuizForm/QuizForm';
 import { LevelFilter } from './LevelFilter';
 import { TopicFilter } from './TopicFilter';
 import { createQuiz, deleteQuiz, fetchQuizzes } from 'api';
+import { useEffect, useState } from 'react';
 
 const localStorageKey = 'quiz-filters';
 const initialFilters = {
@@ -13,133 +13,113 @@ const initialFilters = {
   level: 'all',
 };
 
-export class App extends Component {
-  state = {
-    quizItems: [],
-    filters: initialFilters,
-    loading: false,
-  };
-
-  async componentDidMount() {
-    const savedFilters = localStorage.getItem(localStorageKey);
-    if (savedFilters !== null) {
-      this.setState({
-        filters: JSON.parse(savedFilters),
-      });
-    }
-
-    try {
-      this.setState({ loading: true })
-      const quizItems = await fetchQuizzes();
-      this.setState({ quizItems, loading: false })
-    } catch (error) {
-      console.log(error);
-    }
-
+const getInitialFilters = () => {
+  const savedFilters = localStorage.getItem(localStorageKey);
+  if (savedFilters !== null) {
+    return JSON.parse(savedFilters);
   }
+  return initialFilters
+}
 
-  componentDidUpdate(prevProps, prevState) {
-    const { filters: prevFilters } = prevState;
-    const { filters: nextFilters } = this.state;
+export const App = () => {
+  const [quizItems, setQuizItems] = useState([])
+  const [filters, setFilters] = useState(getInitialFilters)
+  const [loading, setLoading] = useState(false)
 
-    if (prevFilters !== nextFilters) {
-      localStorage.setItem(localStorageKey, JSON.stringify(nextFilters));
+  //Фетч данних х бекенду
+  useEffect(() => {
+    async function getQuizzes() {
+      try {
+        setLoading(true)
+        const quizItems = await fetchQuizzes();
+        setQuizItems(quizItems);
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
     }
-  }
+    getQuizzes()
+  }, [])
 
-  // componentWillUnmount() { }
+  //Запис фільтрів в localStorage
+  useEffect(() => {
+    localStorage.setItem(localStorageKey, JSON.stringify(filters));
+  }, [filters])
 
-  resetFilters = () => {
-    this.setState({
-      filters: initialFilters,
-    });
+  const resetFilters = () => {
+    setFilters(initialFilters)
   };
 
-  changeTopicFilter = newTopic => {
-    this.setState(prevState => {
-      return {
-        filters: {
-          ...prevState.filters,
-          topic: newTopic,
-        },
-      };
-    });
+  const changeTopicFilter = newTopic => {
+    setFilters(prevState => ({
+      ...prevState.filters,
+      topic: newTopic,
+    }))
   };
 
-  changeLevelFilter = newLevel => {
-    this.setState(prevState => {
-      return {
-        filters: {
-          ...prevState.filters,
-          level: newLevel,
-        },
-      };
-    });
+  const changeLevelFilter = newLevel => {
+    setFilters(prevState => ({
+      ...prevState.filters,
+      level: newLevel,
+    }))
   };
 
-  handleDelete = async (quizId) => {
-    try {
-      const deletedQuiz = await deleteQuiz(quizId)
-
-      this.setState(prevState => ({
-        quizItems: prevState.quizItems.filter(quiz => quiz.id !== deletedQuiz.id),
-      }));
-    } catch (error) {
-      console.log(error);
-    }
-
-  };
-
-  addQuiz = async newQuiz => {
+  const addQuiz = async newQuiz => {
     try {
       const createdQuiz = await createQuiz(newQuiz)
-      this.setState(prevState => ({
-        quizItems: [...prevState.quizItems, createdQuiz],
-      }));
+      setQuizItems(prevState => [...prevState, createdQuiz])
+      // це те саме, неявний синтаксис неявного повернення
+      // setQuizItems(prevState => {
+      //   return [...prevState, createdQuiz]
+      // })
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const deleteQuiz = async (quizId) => {
+    try {
+      const deletedQuiz = await deleteQuiz(quizId)
+      setQuizItems(prevState =>
+        prevState.quizItems.filter(quiz => quiz.id !== deletedQuiz.id))
     } catch (error) {
       console.log(error);
     }
 
   };
 
-  getVisibleQuizItems = () => {
-    const { quizItems, filters } = this.state;
-    const lowerCaseTopic = filters.topic.toLowerCase();
+  const getVisibleQuizItems = () => {
+    const lowerCaseTopic = filters.topic;
 
     return quizItems.filter(quiz => {
-      const hasTopis = quiz.topic.toLowerCase().includes(lowerCaseTopic);
-
-      if (filters.level === 'all') {
-        return hasTopis;
-      }
-      return hasTopis && quiz.level === filters.level;
+      const hasTopic = quiz.topic.toLowerCase().includes(lowerCaseTopic);
+      const hasMatchingLevel = quiz.level === filters.level;
+      return filters.level === 'all' ? hasTopic : hasTopic && hasMatchingLevel;
     });
   };
 
-  render() {
-    const { filters, loading } = this.state;
+  const visibleQuizItems = getVisibleQuizItems();
 
-    const visibleQuizItems = this.getVisibleQuizItems();
-
-    return (
-      <Layout>
-        <SearchBar onReset={this.resetFilters}>
-          <TopicFilter
-            value={filters.topic}
-            onChange={this.changeTopicFilter}
-          />
-          <LevelFilter
-            value={filters.level}
-            onChange={this.changeLevelFilter}
-          />
-        </SearchBar>
-        <QuizForm onAdd={this.addQuiz} />
-        {loading ? (
-          <div>LOADING...</div>
-        ) : (
-          <QuizList items={visibleQuizItems} onDelete={this.handleDelete} />
-        )}
-      </Layout>
-    );
-  }
+  return (
+    <Layout>
+      <SearchBar onReset={resetFilters}>
+        <TopicFilter
+          value={filters.topic}
+          onChange={changeTopicFilter}
+        />
+        <LevelFilter
+          value={filters.level}
+          onChange={changeLevelFilter}
+        />
+      </SearchBar>
+      <QuizForm onAdd={addQuiz} />
+      {loading ? (
+        <div>LOADING...</div>
+      ) : (
+        <QuizList items={visibleQuizItems} onDelete={deleteQuiz} />
+      )}
+    </Layout>
+  );
 }

@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import { Topic, Wrapper, Text } from './QuizCard.styled';
 import Modal from 'react-modal';
 
@@ -15,46 +15,40 @@ const customStyles = {
 
 Modal.setAppElement('#root');
 
-export class QuizCard extends Component {
-    state = {
-        isModalOpen: false
-    }
+export const QuizCard = ({
+    item: { id, topic, level, time, questions }, onDelete
+}) => {
 
-    openModal = () => this.setState({ isModalOpen: true })
-    closeModal = () => this.setState({ isModalOpen: false })
+    const [isModalOpen, setIsModalOpen] = useState(false)
 
-    render() {
-        const {
-            item: { id, topic, level, time, questions }, onDelete
-        } = this.props;
+    const openModal = () => setIsModalOpen(true)
+    const closeModal = () => setIsModalOpen(false)
 
-        return (
-            <Wrapper >
-                <Topic onClick={this.openModal}>{topic}</Topic>
-                <Text>
-                    <b>Level:</b> {level}
-                </Text>
-                <Text>
-                    <b>Time:</b> {time} min
-                </Text>
-                <Text>
-                    <b>Questions:</b> {questions}
-                </Text>
-                <div>
-                    <button onClick={() => onDelete(id)}>Delete</button>
-                </div>
+    return (
+        <Wrapper >
+            <Topic onClick={openModal}>{topic}</Topic>
+            <Text>
+                <b>Level:</b> {level}
+            </Text>
+            <Text>
+                <b>Time:</b> {time} min
+            </Text>
+            <Text>
+                <b>Questions:</b> {questions}
+            </Text>
+            <div>
+                <button onClick={() => onDelete(id)}>Delete</button>
+            </div>
 
-                <Modal
-                    isOpen={this.state.isModalOpen}
-                    onRequestClose={this.closeModal}
-                    style={customStyles}
-                >
-                    <h1>{topic}</h1>
-                    <button onClick={this.closeModal}>close</button>
+            <Modal
+                isOpen={isModalOpen}
+                onRequestClose={closeModal}
+                style={customStyles}
+            >
+                <h1>{topic}</h1>
+                <button onClick={closeModal}>close</button>
 
-                </Modal>
-            </Wrapper>
-        );
-    }
+            </Modal>
+        </Wrapper>
+    );
 }
-
